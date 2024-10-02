@@ -23,7 +23,7 @@ Esse projeto tem como intuito fazer a comunicação do servidor em express com o
       - showbusiness_view
       - showuser_view
 2. Requisitos não funcionais:
-   - penas um usuário por e-mail
+   - apenas um usuário por e-mail
    - listar apenas registros que não tenham uma data de remoção
    - realizar crud em até 900 ms
         
