@@ -5,6 +5,7 @@ import { LocationService } from '../services/locationService';
 import { dataUser, dataUpdateUser, Password } from '../utils/formatData'
 import bcrypt  from 'bcrypt';
 import { generateToken, verifyToken } from '../utils/auth';
+import { dateNow } from '../utils/dateNow';
 
 // Função para criar um novo usuário
 export const createUser = async (req: Request, res: Response) => {
@@ -206,6 +207,25 @@ export const searchEmail = async (req: Request, res: Response) =>{
   try{
    const result = await UserService.searchEmail({email: email.toString()});
    res.status(200).json(result);
+  }catch (error){
+    return console.error(error);
+  }
+}
+
+export const deleteUser = async (req: Request, res: Response) =>{
+  const {id} = req.query;
+  const idUser = parseInt(id as string);
+  console.log(idUser);
+  const date = new Date
+  const removeAt = dateNow(date)
+  console.log(removeAt);
+  if(!idUser || !removeAt){
+    return console.error('Error internal!');
+  }
+  const params = {removeAt, idUser};
+  try{
+    const result = await UserService.deleteUser(params);
+    return res.status(200).send('remove successful!');
   }catch (error){
     return console.error(error);
   }

@@ -1,5 +1,5 @@
 import pool from '../config/database';
-import { SearchCPf, SearchEmail, ShowUser, UpdatePassword, UpdateUser, User } from '../models/userModel';
+import { DeleteUser, SearchCPf, SearchEmail, ShowUser, UpdatePassword, UpdateUser, User } from '../models/userModel';
 import { RowDataPacket } from 'mysql2';
 export class UserService {
 
@@ -16,7 +16,7 @@ export class UserService {
 
   static async loginUser(emailUser: User): Promise<User[]>{
     //console.log(emailUser)
-    const [rows] = await pool.query<User[] & RowDataPacket[]>('SELECT * FROM dbdev.users WHERE emailUser = ?',
+    const [rows] = await pool.query<User[] & RowDataPacket[]>('SELECT * FROM dbdev.users WHERE emailUser = ? and removeAt is null',
       [`${emailUser}`]
     );
     return rows
@@ -44,7 +44,10 @@ export class UserService {
     return rows
   }
   static async searchEmail(data: SearchEmail): Promise<User[]>{
-    const [rows] = await pool.query<User[] & RowDataPacket[]>('SELECT * FROM dbdev.users WHERE emailUser = ?', [data.email]);
+    const [rows] = await pool.query<User[] & RowDataPacket[]>('SELECT * FROM dbdev.users WHERE emailUser = ? and removeAt is null', [data.email]);
     return rows
+  }
+  static async deleteUser(params: DeleteUser){
+    const result = await pool.query('UPDATE dbdev.users SET removeAt = ? WHERE idUser = ? ',[params.removeAt, params.idUser]);
   }
 }

@@ -60,3 +60,8 @@ export interface SearchCPf{
 export interface SearchEmail{
   email:string;
 }
+
+export interface DeleteUser{
+  idUser: number;
+  removeAt: Date;
+}
