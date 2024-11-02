@@ -12,13 +12,13 @@ export class ProductService {
     }
     static async ListProduct(now: string): Promise<Product[]>{
             const [rows] = await pool.query<Product[] & RowDataPacket[]>(
-                "SELECT * FROM dbdev.product_view WHERE approved is true and removeAt is null and expirationPrice > ? ORDER BY createAt DESC, price ASC;", [`${now}`]
+                "SELECT pv.* FROM dbdev.product_view pv INNER JOIN dbdev.products p on p.idproduct = pv.id WHERE pv.approved is true and pv.removeAt is null and p.expirationPrice >= ? ORDER BY pv.createAt DESC, price ASC;", [`${now}`]
                 );
             return rows
     }
     static async ListProductSearch(search: GetProductSearch): Promise<ProductSearch[]>{
         const [rows] = await pool.query<ProductSearch[] & RowDataPacket[]>(
-            "SELECT * FROM dbdev.product_view WHERE nameProduct like ? and ( 6371 * acos(cos(radians(?)) * cos(radians(product_view.lat)) * cos(radians(product_view.lng) - radians(?)) + sin(radians(?)) * sin(radians(product_view.lat))) <= ?) and approved is true and removeAt is null and expirationPrice > ?  ORDER BY createAt DESC, price ASC;",
+            "SELECT pv.* FROM dbdev.product_view pv INNER JOIN dbdev.products p ON p.idproduct = pv.id WHERE pv.nameProduct like ?  and ( 6371 * acos(cos(radians(?)) * cos(radians(pv.lat)) * cos(radians(pv.lng) - radians(?)) + sin(radians(?)) * sin(radians(pv.lat))) <= ?) and pv.approved is true and pv.removeAt is null and p.expirationPrice >= ? ORDER BY pv.createAt DESC, pv.price ASC;",
             [`%${search.search}%`, search.latFirst, search.lng, search.latSec, search.radian, `${search.dateNow}`]
         );
         return rows
